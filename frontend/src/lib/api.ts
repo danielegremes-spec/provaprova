@@ -1,4 +1,4 @@
-import { AnalyticsInsights, DashboardSummary, User, Workspace } from '../types';
+import { AiAdvice, AnalyticsInsights, DashboardSummary, User, Workspace } from '../types';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
@@ -116,6 +116,12 @@ export const api = {
     if (month) params.set('month', month.toString());
     if (year) params.set('year', year.toString());
     return request<AnalyticsInsights>(`/analytics/insights?${params}`);
+  },
+  getAdvice: (month?: number, year?: number) => {
+    const params = new URLSearchParams();
+    if (month) params.set('month', month.toString());
+    if (year) params.set('year', year.toString());
+    return request<AiAdvice>(`/analytics/advice?${params}`);
   },
   getCategoryBreakdown: (month?: number, year?: number) => {
     const params = new URLSearchParams();

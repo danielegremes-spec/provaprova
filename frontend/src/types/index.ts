@@ -114,3 +114,20 @@ export interface AnalyticsInsights {
   month: number;
   year: number;
 }
+
+export interface AiAdviceItem {
+  id: string;
+  kind: 'cashflow' | 'budget' | 'spending' | 'goal' | 'opportunity';
+  priority: 'high' | 'medium' | 'low';
+  title: string;
+  summary: string;
+  action: string;
+  confidence: number;
+}
+
+export interface AiAdvice {
+  overview: string;
+  nextBestAction: string;
+  generatedAt: string;
+  items: AiAdviceItem[];
+}

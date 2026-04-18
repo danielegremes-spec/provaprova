@@ -3,6 +3,7 @@ import {
   Activity,
   AlertTriangle,
   ArrowUpRight,
+  BrainCircuit,
   CalendarRange,
   Gauge,
   PiggyBank,
@@ -40,6 +41,7 @@ export function Dashboard() {
   const {
     summary,
     insights,
+    advice,
     trend,
     user,
     workspace,
@@ -47,6 +49,7 @@ export function Dashboard() {
     selectedYear,
     setSummary,
     setInsights,
+    setAdvice,
     setTrend,
     setSelectedMonth,
     setSelectedYear,
@@ -55,12 +58,13 @@ export function Dashboard() {
   useEffect(() => {
     api.getSummary(selectedMonth, selectedYear).then(setSummary).catch(console.error);
     api.getInsights(selectedMonth, selectedYear).then(setInsights).catch(console.error);
+    api.getAdvice(selectedMonth, selectedYear).then(setAdvice).catch(console.error);
     api.getTrend().then(setTrend).catch(console.error);
-  }, [selectedMonth, selectedYear, setInsights, setSummary, setTrend]);
+  }, [selectedMonth, selectedYear, setAdvice, setInsights, setSummary, setTrend]);
 
-  if (!summary || !insights) {
+  if (!summary || !insights || !advice) {
     return (
-      <div className="flex items-center justify-center h-64">
+      <div className="flex h-64 items-center justify-center">
         <div className="text-muted-foreground">Caricamento dashboard strategica...</div>
       </div>
     );
@@ -86,7 +90,7 @@ export function Dashboard() {
               Ciao {user?.email.split('@')[0]}, ecco il polso reale del tuo business personale.
             </h1>
             <p className="mt-3 max-w-xl text-sm leading-6 text-white/72 md:text-base">
-              Questa vista unisce cassa, disciplina di budget e velocita di avanzamento verso gli obiettivi.
+              Ora hai anche un AI Financial Coach che interpreta il mese e ti suggerisce la prossima mossa migliore.
             </p>
           </div>
 
@@ -163,7 +167,53 @@ export function Dashboard() {
         />
       </section>
 
-      <section className="grid gap-4 xl:grid-cols-[1.4fr_1fr]">
+      <section className="grid gap-4 xl:grid-cols-[1.2fr_1fr_1fr]">
+        <Card className="overflow-hidden border-border shadow-sm">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <div>
+              <CardTitle>AI Financial Coach</CardTitle>
+              <p className="text-sm text-muted-foreground">Consigli prioritizzati sui tuoi dati per il mese selezionato.</p>
+            </div>
+            <div className="rounded-full bg-primary/10 p-2 text-primary">
+              <BrainCircuit className="h-4 w-4" />
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="rounded-2xl border border-border bg-muted/30 p-4">
+              <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Sintesi</div>
+              <div className="mt-2 text-base font-medium text-foreground">{advice.overview}</div>
+              <div className="mt-3 text-sm text-muted-foreground">
+                Prossima mossa consigliata: <span className="font-medium text-foreground">{advice.nextBestAction}</span>
+              </div>
+            </div>
+
+            <div className="grid gap-3">
+              {advice.items.map((item) => (
+                <div key={item.id} className="rounded-2xl border border-border bg-background p-4">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div className="font-medium text-foreground">{item.title}</div>
+                    <div className={cn(
+                      'rounded-full px-2.5 py-1 text-xs font-semibold uppercase tracking-[0.16em]',
+                      item.priority === 'high' && 'bg-rose-500/10 text-rose-500',
+                      item.priority === 'medium' && 'bg-amber-500/10 text-amber-500',
+                      item.priority === 'low' && 'bg-emerald-500/10 text-emerald-500'
+                    )}>
+                      {item.priority}
+                    </div>
+                  </div>
+                  <p className="mt-2 text-sm text-muted-foreground">{item.summary}</p>
+                  <div className="mt-3 rounded-xl bg-muted/40 px-3 py-2 text-sm text-foreground">
+                    {item.action}
+                  </div>
+                  <div className="mt-2 text-xs text-muted-foreground">
+                    confidenza {(item.confidence * 100).toFixed(0)}%
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
         <Card className="overflow-hidden border-border shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between">
             <div>
@@ -174,7 +224,7 @@ export function Dashboard() {
               score {insights.healthScore}
             </div>
           </CardHeader>
-          <CardContent className="grid gap-4 md:grid-cols-3">
+          <CardContent className="grid gap-4 md:grid-cols-3 xl:grid-cols-1">
             <InsightStat
               icon={CalendarRange}
               label="Spesa media giornaliera"
@@ -240,12 +290,12 @@ export function Dashboard() {
           </CardHeader>
           <CardContent>
             {trend.length === 0 ? (
-              <div className="h-[300px] flex items-center justify-center text-muted-foreground">
+              <div className="flex h-[300px] items-center justify-center text-muted-foreground">
                 Nessun dato disponibile
               </div>
             ) : (
               <>
-                <div className="h-[300px] flex items-end justify-between gap-2">
+                <div className="flex h-[300px] items-end justify-between gap-2">
                   {trend.map((data) => {
                     const maxValue = Math.max(...trend.map((item) => Math.max(item.income, item.expenses) || 1));
                     return (

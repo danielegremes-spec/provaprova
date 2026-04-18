@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import {
+  AiAdvice,
   AnalyticsInsights,
   Budget,
   Category,
@@ -27,6 +28,7 @@ interface AppState {
   goals: Goal[];
   summary: DashboardSummary | null;
   insights: AnalyticsInsights | null;
+  advice: AiAdvice | null;
   categoryBreakdown: CategoryBreakdown[];
   trend: MonthlyTrend[];
 
@@ -53,6 +55,7 @@ interface AppState {
   deleteGoal: (id: string) => void;
   setSummary: (summary: DashboardSummary) => void;
   setInsights: (insights: AnalyticsInsights | null) => void;
+  setAdvice: (advice: AiAdvice | null) => void;
   setCategoryBreakdown: (breakdown: CategoryBreakdown[]) => void;
   setTrend: (trend: MonthlyTrend[]) => void;
   toggleDarkMode: () => void;
@@ -74,6 +77,7 @@ export const useAppStore = create<AppState>()(
       goals: [],
       summary: null,
       insights: null,
+      advice: null,
       categoryBreakdown: [],
       trend: [],
       darkMode: false,
@@ -93,6 +97,7 @@ export const useAppStore = create<AppState>()(
         goals: [],
         summary: null,
         insights: null,
+        advice: null,
       }),
 
       // Transactions
@@ -124,6 +129,7 @@ export const useAppStore = create<AppState>()(
       // Analytics
       setSummary: (summary) => set({ summary }),
       setInsights: (insights) => set({ insights }),
+      setAdvice: (advice) => set({ advice }),
       setCategoryBreakdown: (breakdown) => set({ categoryBreakdown: breakdown }),
       setTrend: (trend) => set({ trend }),
 
