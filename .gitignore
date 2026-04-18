@@ -5,6 +5,10 @@ coverage/
 frontend/node_modules/
 frontend/dist/
 backend/node_modules/
+backend/data/
+*.db
+*.db-shm
+*.db-wal
 
 .env
 .env.*
