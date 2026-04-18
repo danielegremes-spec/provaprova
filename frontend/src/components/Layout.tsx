@@ -1,7 +1,7 @@
 import { ReactNode, useState } from 'react';
 import { useAppStore } from '../store';
 import { cn } from '../lib/utils';
-import { LayoutDashboard, CreditCard, PiggyBank, Target, Menu, X, LogOut, Moon, Sun } from 'lucide-react';
+import { LayoutDashboard, CreditCard, PiggyBank, Target, Menu, X, LogOut, Moon, Sun, Sparkles } from 'lucide-react';
 import { Button } from './ui/Button';
 
 interface LayoutProps {
@@ -19,7 +19,7 @@ const tabs = [
 
 export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { toggleDarkMode, darkMode } = useAppStore();
+  const { toggleDarkMode, darkMode, user, workspace } = useAppStore();
   const logout = useAppStore((state) => state.logout);
 
   const handleLogout = () => {
@@ -42,6 +42,20 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
           </Button>
           <h1 className="text-xl font-bold text-foreground">MoneyFlow</h1>
           <div className="ml-auto flex items-center gap-2">
+            {user && (
+              <div className="hidden lg:flex items-center gap-3 rounded-full border border-border bg-background/80 px-3 py-1.5">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/12 text-primary">
+                  {user.email.slice(0, 1).toUpperCase()}
+                </div>
+                <div className="text-left leading-tight">
+                  <div className="text-sm font-medium text-foreground">{user.email}</div>
+                  <div className="flex items-center gap-1 text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                    <Sparkles className="h-3 w-3" />
+                    {workspace?.plan || 'starter'}
+                  </div>
+                </div>
+              </div>
+            )}
             <Button variant="ghost" size="sm" onClick={toggleDarkMode} className="text-foreground">
               {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </Button>
@@ -59,6 +73,14 @@ export function Layout({ children, activeTab, onTabChange }: LayoutProps) {
           'fixed inset-y-0 left-0 z-40 w-64 transform border-r bg-card pt-14 transition-transform duration-200 ease-in-out md:translate-x-0 md:static md:h-[calc(100vh-3.5rem)] md:shadow-none',
           mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
         )}>
+          {user && (
+            <div className="border-b border-border px-4 py-4 md:hidden">
+              <div className="text-sm font-medium text-foreground">{user.email}</div>
+              <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                Piano {workspace?.plan || 'starter'}
+              </div>
+            </div>
+          )}
           <nav className="space-y-1 p-4">
             {tabs.map((tab) => {
               const Icon = tab.icon;

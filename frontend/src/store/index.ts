@@ -1,11 +1,23 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { Transaction, Category, Budget, Goal, DashboardSummary, CategoryBreakdown, MonthlyTrend } from '../types';
+import {
+  AnalyticsInsights,
+  Budget,
+  Category,
+  CategoryBreakdown,
+  DashboardSummary,
+  Goal,
+  MonthlyTrend,
+  Transaction,
+  User,
+  Workspace,
+} from '../types';
 
 interface AppState {
   // Auth
   token: string | null;
-  user: { id: string; email: string } | null;
+  user: User | null;
+  workspace: Workspace | null;
   isAuthenticated: boolean;
 
   // Data
@@ -14,6 +26,7 @@ interface AppState {
   budgets: Budget[];
   goals: Goal[];
   summary: DashboardSummary | null;
+  insights: AnalyticsInsights | null;
   categoryBreakdown: CategoryBreakdown[];
   trend: MonthlyTrend[];
 
@@ -23,7 +36,8 @@ interface AppState {
   selectedYear: number;
 
   // Actions
-  setAuth: (token: string, user: { id: string; email: string }) => void;
+  setAuth: (token: string, user: User) => void;
+  setWorkspace: (workspace: Workspace | null) => void;
   logout: () => void;
   setTransactions: (transactions: Transaction[]) => void;
   addTransaction: (transaction: Transaction) => void;
@@ -38,6 +52,7 @@ interface AppState {
   updateGoal: (id: string, data: Partial<Goal>) => void;
   deleteGoal: (id: string) => void;
   setSummary: (summary: DashboardSummary) => void;
+  setInsights: (insights: AnalyticsInsights | null) => void;
   setCategoryBreakdown: (breakdown: CategoryBreakdown[]) => void;
   setTrend: (trend: MonthlyTrend[]) => void;
   toggleDarkMode: () => void;
@@ -51,12 +66,14 @@ export const useAppStore = create<AppState>()(
       // Initial state
       token: null,
       user: null,
+      workspace: null,
       isAuthenticated: false,
       transactions: [],
       categories: [],
       budgets: [],
       goals: [],
       summary: null,
+      insights: null,
       categoryBreakdown: [],
       trend: [],
       darkMode: false,
@@ -65,7 +82,18 @@ export const useAppStore = create<AppState>()(
 
       // Auth actions
       setAuth: (token, user) => set({ token, user, isAuthenticated: true }),
-      logout: () => set({ token: null, user: null, isAuthenticated: false, transactions: [], budgets: [], goals: [] }),
+      setWorkspace: (workspace) => set({ workspace }),
+      logout: () => set({
+        token: null,
+        user: null,
+        workspace: null,
+        isAuthenticated: false,
+        transactions: [],
+        budgets: [],
+        goals: [],
+        summary: null,
+        insights: null,
+      }),
 
       // Transactions
       setTransactions: (transactions) => set({ transactions }),
@@ -95,6 +123,7 @@ export const useAppStore = create<AppState>()(
 
       // Analytics
       setSummary: (summary) => set({ summary }),
+      setInsights: (insights) => set({ insights }),
       setCategoryBreakdown: (breakdown) => set({ categoryBreakdown: breakdown }),
       setTrend: (trend) => set({ trend }),
 
@@ -108,7 +137,13 @@ export const useAppStore = create<AppState>()(
     }),
     {
       name: 'moneyflow-storage',
-      partialize: (state) => ({ token: state.token, user: state.user, isAuthenticated: state.isAuthenticated, darkMode: state.darkMode }),
+      partialize: (state) => ({
+        token: state.token,
+        user: state.user,
+        workspace: state.workspace,
+        isAuthenticated: state.isAuthenticated,
+        darkMode: state.darkMode,
+      }),
     }
   )
 );

@@ -1,6 +1,15 @@
 export interface User {
   id: string;
   email: string;
+  createdAt?: string;
+}
+
+export interface Workspace {
+  plan: string;
+  transactionCount: number;
+  budgetCount: number;
+  goalCount: number;
+  accountCount: number;
 }
 
 export interface Transaction {
@@ -55,8 +64,12 @@ export interface DashboardSummary {
   totalBalance: number;
   monthlyIncome: number;
   monthlyExpenses: number;
+  monthlySavings: number;
+  savingsRate: number;
   prevMonthlyIncome: number;
   prevMonthlyExpenses: number;
+  month: number;
+  year: number;
 }
 
 export interface CategoryBreakdown {
@@ -71,4 +84,33 @@ export interface MonthlyTrend {
   month: string;
   income: number;
   expenses: number;
+}
+
+export interface BudgetAlert {
+  id: string;
+  categoryName: string;
+  spent: number;
+  budgeted: number;
+  progress: number;
+}
+
+export interface TopExpenseCategory {
+  name: string;
+  color: string;
+  total: number;
+  share: number;
+}
+
+export interface AnalyticsInsights {
+  healthScore: number;
+  savingsRate: number;
+  averageDailySpend: number;
+  runwayDays: number | null;
+  budgetAlerts: BudgetAlert[];
+  topExpenseCategory: TopExpenseCategory | null;
+  smartActions: string[];
+  transactionCount: number;
+  averageGoalProgress: number;
+  month: number;
+  year: number;
 }

@@ -1,3 +1,5 @@
+import { AnalyticsInsights, DashboardSummary, User, Workspace } from '../types';
+
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
 async function request<T>(endpoint: string, options?: RequestInit): Promise<T> {
@@ -23,16 +25,18 @@ async function request<T>(endpoint: string, options?: RequestInit): Promise<T> {
 export const api = {
   // Auth
   register: (email: string, password: string) =>
-    request<{ token: string; user: { id: string; email: string } }>('/auth/register', {
+    request<{ token: string; user: User }>('/auth/register', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     }),
 
   login: (email: string, password: string) =>
-    request<{ token: string; user: { id: string; email: string } }>('/auth/login', {
+    request<{ token: string; user: User }>('/auth/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     }),
+
+  me: () => request<{ user: User; workspace: Workspace }>('/auth/me'),
 
   // Transactions
   getTransactions: (month?: number, year?: number, type?: string) => {
@@ -96,7 +100,18 @@ export const api = {
   deleteGoal: (id: string) => request<void>(`/goals/${id}`, { method: 'DELETE' }),
 
   // Analytics
-  getSummary: () => request<any>('/analytics/summary'),
+  getSummary: (month?: number, year?: number) => {
+    const params = new URLSearchParams();
+    if (month) params.set('month', month.toString());
+    if (year) params.set('year', year.toString());
+    return request<DashboardSummary>(`/analytics/summary?${params}`);
+  },
+  getInsights: (month?: number, year?: number) => {
+    const params = new URLSearchParams();
+    if (month) params.set('month', month.toString());
+    if (year) params.set('year', year.toString());
+    return request<AnalyticsInsights>(`/analytics/insights?${params}`);
+  },
   getCategoryBreakdown: (month?: number, year?: number) => {
     const params = new URLSearchParams();
     if (month) params.set('month', month.toString());

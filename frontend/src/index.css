@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap');
 @import "tailwindcss";
 
 @theme {
@@ -26,47 +27,47 @@
 }
 
 :root {
-  --border: 214.3 31.8% 91.4%;
-  --input: 214.3 31.8% 91.4%;
-  --ring: 221.2 83.2% 53.3%;
-  --background: 0 0% 100%;
-  --foreground: 222.2 84% 4.9%;
-  --primary: 221.2 83.2% 53.3%;
+  --border: 200 24% 88%;
+  --input: 200 24% 88%;
+  --ring: 197 88% 45%;
+  --background: 210 33% 98%;
+  --foreground: 215 45% 14%;
+  --primary: 197 88% 45%;
   --primary-foreground: 210 40% 98%;
-  --secondary: 210 40% 96.1%;
-  --secondary-foreground: 222.2 47.4% 11.2%;
-  --destructive: 0 84.2% 60.2%;
+  --secondary: 195 36% 94%;
+  --secondary-foreground: 215 45% 14%;
+  --destructive: 0 75% 56%;
   --destructive-foreground: 210 40% 98%;
-  --muted: 210 40% 96.1%;
-  --muted-foreground: 215.4 16.3% 46.9%;
-  --accent: 210 40% 96.1%;
-  --accent-foreground: 222.2 47.4% 11.2%;
+  --muted: 195 30% 95%;
+  --muted-foreground: 216 18% 42%;
+  --accent: 193 54% 92%;
+  --accent-foreground: 215 45% 14%;
   --popover: 0 0% 100%;
-  --popover-foreground: 222.2 84% 4.9%;
+  --popover-foreground: 215 45% 14%;
   --card: 0 0% 100%;
-  --card-foreground: 222.2 84% 4.9%;
-  --radius: 0.5rem;
+  --card-foreground: 215 45% 14%;
+  --radius: 0.9rem;
 }
 
 .dark {
-  --border: 217.2 32.6% 25%;
-  --input: 217.2 32.6% 25%;
-  --ring: 217.2 91.2% 59.8%;
-  --background: 222.2 84% 6%;
+  --border: 214 28% 24%;
+  --input: 214 28% 24%;
+  --ring: 191 92% 62%;
+  --background: 217 39% 8%;
   --foreground: 210 40% 98%;
-  --primary: 217.2 91.2% 65%;
+  --primary: 191 92% 62%;
   --primary-foreground: 222.2 47.4% 11.2%;
-  --secondary: 217.2 32.6% 20%;
+  --secondary: 217 28% 16%;
   --secondary-foreground: 210 40% 98%;
-  --destructive: 0 62.8% 40%;
+  --destructive: 0 68% 46%;
   --destructive-foreground: 210 40% 98%;
-  --muted: 217.2 32.6% 20%;
+  --muted: 217 28% 14%;
   --muted-foreground: 215 20.2% 70%;
-  --accent: 217.2 32.6% 20%;
+  --accent: 213 30% 18%;
   --accent-foreground: 210 40% 98%;
-  --popover: 222.2 84% 8%;
+  --popover: 217 39% 10%;
   --popover-foreground: 210 40% 98%;
-  --card: 222.2 84% 10%;
+  --card: 217 39% 11%;
   --card-foreground: 210 40% 98%;
 }
 
@@ -77,6 +78,10 @@
 body {
   background-color: var(--background);
   color: var(--foreground);
+  background-image:
+    radial-gradient(circle at top left, rgba(14, 165, 233, 0.12), transparent 22%),
+    radial-gradient(circle at bottom right, rgba(16, 185, 129, 0.12), transparent 18%);
+  font-family: 'Space Grotesk', 'Segoe UI', sans-serif;
 }
 
 /* Smooth transitions */
@@ -90,4 +95,8 @@ body {
 :focus-visible {
   outline: 2px solid var(--ring);
   outline-offset: 2px;
+}
+
+::selection {
+  background: rgba(14, 165, 233, 0.24);
 }
