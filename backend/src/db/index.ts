@@ -1,8 +1,19 @@
 import Database from 'better-sqlite3';
+import fs from 'fs';
 import path from 'path';
 
-const dbPath = path.join(__dirname, '../../data/moneyflow.db');
-export const db = new Database(dbPath);
+const defaultDbPath = process.env.VERCEL
+  ? '/tmp/moneyflow.db'
+  : path.join(__dirname, '../../data/moneyflow.db');
+
+const dbPath = process.env.DATABASE_PATH || defaultDbPath;
+
+if (!process.env.VERCEL) {
+  fs.mkdirSync(path.dirname(dbPath), { recursive: true });
+}
+
+const sqlite = new Database(dbPath);
+export const db: Database.Database = sqlite;
 
 db.pragma('journal_mode = WAL');
 db.pragma('foreign_keys = ON');

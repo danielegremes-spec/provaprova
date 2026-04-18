@@ -1,30 +1,12 @@
-import { Router, Request } from 'express';
-import { v4 as uuidv4 } from 'uuid';
+import { Router } from 'express';
+import { randomUUID } from 'crypto';
 import { db } from '../db';
+import { AuthRequest, requireAuth } from '../middleware/auth';
 
 const router = Router();
 
-interface AuthRequest extends Request {
-  userId?: string;
-}
+router.use(requireAuth);
 
-function authMiddleware(req: AuthRequest, res: any, next: any) {
-  const authHeader = req.headers.authorization;
-  if (!authHeader?.startsWith('Bearer ')) {
-    return res.status(401).json({ error: 'Token non fornito' });
-  }
-  // Per semplicità, prendiamo il primo utente se non c'è auth reale
-  const user: any = db.prepare('SELECT id FROM users LIMIT 1').get();
-  if (!user) {
-    return res.status(401).json({ error: 'Nessun utente registrato' });
-  }
-  req.userId = user.id;
-  next();
-}
-
-router.use(authMiddleware);
-
-// GET tutte le transazioni
 router.get('/', (req: AuthRequest, res) => {
   try {
     const { month, year, type } = req.query as any;
@@ -57,7 +39,6 @@ router.get('/', (req: AuthRequest, res) => {
   }
 });
 
-// POST nuova transazione
 router.post('/', (req: AuthRequest, res) => {
   try {
     const { accountId, categoryId, amount, type, description, date, currency, exchangeRate } = req.body;
@@ -66,11 +47,10 @@ router.post('/', (req: AuthRequest, res) => {
       return res.status(400).json({ error: 'Importo, tipo e data sono richiesti' });
     }
 
-    const id = uuidv4();
+    const id = randomUUID();
     const account = db.prepare('SELECT * FROM accounts WHERE id = ? AND user_id = ?').get(accountId, req.userId!) as any;
 
     if (!account) {
-      // Prendi il primo account dell'utente
       const defaultAccount: any = db.prepare('SELECT id FROM accounts WHERE user_id = ?').get(req.userId!);
       if (!defaultAccount) {
         return res.status(400).json({ error: 'Nessun account trovato' });
@@ -80,14 +60,21 @@ router.post('/', (req: AuthRequest, res) => {
 
     const balanceChange = type === 'income' ? amount : -amount;
 
-    const stmt = db.prepare(`
+    db.prepare(`
       INSERT INTO transactions (id, account_id, category_id, amount, type, description, date, currency, exchange_rate)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `);
+    `).run(
+      id,
+      req.body.accountId || account?.id,
+      categoryId,
+      amount,
+      type,
+      description || null,
+      date,
+      currency || 'EUR',
+      exchangeRate || 1.0
+    );
 
-    stmt.run(id, req.body.accountId || account?.id, categoryId, amount, type, description || null, date, currency || 'EUR', exchangeRate || 1.0);
-
-    // Aggiorna bilancio account
     db.prepare('UPDATE accounts SET balance = balance + ? WHERE id = ?').run(balanceChange, req.body.accountId || account?.id);
 
     const newTransaction = db.prepare('SELECT * FROM transactions WHERE id = ?').get(id);
@@ -97,7 +84,6 @@ router.post('/', (req: AuthRequest, res) => {
   }
 });
 
-// PUT modifica transazione
 router.put('/:id', (req: AuthRequest, res) => {
   try {
     const { id } = req.params;
@@ -118,7 +104,6 @@ router.put('/:id', (req: AuthRequest, res) => {
       WHERE id = ?
     `).run(amount, type, description, date, categoryId, id);
 
-    // Aggiorna bilancio account
     db.prepare('UPDATE accounts SET balance = balance + ? WHERE id = ?').run(netChange, transaction.account_id);
 
     const updatedTransaction = db.prepare('SELECT * FROM transactions WHERE id = ?').get(id);
@@ -128,7 +113,6 @@ router.put('/:id', (req: AuthRequest, res) => {
   }
 });
 
-// DELETE transazione
 router.delete('/:id', (req: AuthRequest, res) => {
   try {
     const { id } = req.params;
@@ -149,7 +133,6 @@ router.delete('/:id', (req: AuthRequest, res) => {
   }
 });
 
-// GET categorie
 router.get('/categories', (req: AuthRequest, res) => {
   try {
     const categories = db.prepare(`

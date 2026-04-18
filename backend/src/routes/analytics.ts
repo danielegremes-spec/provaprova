@@ -1,32 +1,19 @@
-import { Router, Request } from 'express';
+import { Router } from 'express';
 import { db } from '../db';
+import { AuthRequest, requireAuth } from '../middleware/auth';
 
 const router = Router();
 
-interface AuthRequest extends Request {
-  userId?: string;
-}
+router.use(requireAuth);
 
-function authMiddleware(req: AuthRequest, res: any, next: any) {
-  const user: any = db.prepare('SELECT id FROM users LIMIT 1').get();
-  if (!user) return res.status(401).json({ error: 'Nessun utente registrato' });
-  req.userId = user.id;
-  next();
-}
-
-router.use(authMiddleware);
-
-// GET summary dashboard
 router.get('/summary', (req: AuthRequest, res) => {
   try {
     const now = new Date();
     const currentMonth = now.getMonth() + 1;
     const currentYear = now.getFullYear();
 
-    // Total balance
     const account: any = db.prepare('SELECT SUM(balance) as total FROM accounts WHERE user_id = ?').get(req.userId!);
 
-    // Current month income/expenses
     const monthlyStats: any = db.prepare(`
       SELECT
         COALESCE(SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END), 0) as income,
@@ -36,7 +23,6 @@ router.get('/summary', (req: AuthRequest, res) => {
       WHERE a.user_id = ? AND strftime('%m', t.date) = ? AND strftime('%Y', t.date) = ?
     `).get(req.userId!, currentMonth.toString().padStart(2, '0'), currentYear.toString());
 
-    // Previous month for comparison
     const prevDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
     const prevMonth = prevDate.getMonth() + 1;
     const prevYear = prevDate.getFullYear();
@@ -62,7 +48,6 @@ router.get('/summary', (req: AuthRequest, res) => {
   }
 });
 
-// GET category breakdown
 router.get('/categories', (req: AuthRequest, res) => {
   try {
     const { month, year } = req.query as any;
@@ -93,7 +78,6 @@ router.get('/categories', (req: AuthRequest, res) => {
   }
 });
 
-// GET monthly trend (last 6 months)
 router.get('/trend', (req: AuthRequest, res) => {
   try {
     const trend = db.prepare(`

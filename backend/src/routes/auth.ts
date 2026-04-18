@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'crypto';
 import { db } from '../db';
 
 const router = Router();
@@ -20,14 +20,14 @@ router.post('/register', async (req, res) => {
       return res.status(409).json({ error: 'Email già registrata' });
     }
 
-    const id = uuidv4();
+    const id = randomUUID();
     const passwordHash = await bcrypt.hash(password, 10);
 
     db.prepare('INSERT INTO users (id, email, password_hash) VALUES (?, ?, ?)').run(id, email, passwordHash);
 
     // Crea account default
     db.prepare('INSERT INTO accounts (id, user_id, name, balance) VALUES (?, ?, ?, ?)').run(
-      uuidv4(),
+      randomUUID(),
       id,
       'Conto Principale',
       0

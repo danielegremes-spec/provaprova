@@ -1,21 +1,11 @@
-import { Router, Request } from 'express';
-import { v4 as uuidv4 } from 'uuid';
+import { Router } from 'express';
+import { randomUUID } from 'crypto';
 import { db } from '../db';
+import { AuthRequest, requireAuth } from '../middleware/auth';
 
 const router = Router();
 
-interface AuthRequest extends Request {
-  userId?: string;
-}
-
-function authMiddleware(req: AuthRequest, res: any, next: any) {
-  const user: any = db.prepare('SELECT id FROM users LIMIT 1').get();
-  if (!user) return res.status(401).json({ error: 'Nessun utente registrato' });
-  req.userId = user.id;
-  next();
-}
-
-router.use(authMiddleware);
+router.use(requireAuth);
 
 router.get('/', (req: AuthRequest, res) => {
   try {
@@ -40,7 +30,7 @@ router.post('/', (req: AuthRequest, res) => {
       return res.status(400).json({ error: 'Categoria, importo e data inizio richiesti' });
     }
 
-    const id = uuidv4();
+    const id = randomUUID();
     db.prepare(`
       INSERT INTO budgets (id, user_id, category_id, amount, period, start_date, end_date)
       VALUES (?, ?, ?, ?, ?, ?, ?)
