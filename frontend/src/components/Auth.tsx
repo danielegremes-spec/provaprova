@@ -72,17 +72,19 @@ export function Auth({ onSuccess }: AuthProps) {
   };
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(56,189,248,0.18),_transparent_28%),radial-gradient(circle_at_bottom_right,_rgba(16,185,129,0.15),_transparent_25%)] px-4 py-8">
+    <div className="min-h-screen overflow-hidden bg-[radial-gradient(circle_at_top_left,_rgba(34,211,238,0.2),_transparent_24%),radial-gradient(circle_at_80%_10%,_rgba(59,130,246,0.22),_transparent_22%),linear-gradient(135deg,#020617_0%,#071224_44%,#0f172a_100%)] px-4 py-8 text-white">
       <div className="mx-auto grid min-h-[calc(100vh-4rem)] max-w-6xl items-center gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-        <section className="hidden rounded-[32px] border border-border/60 bg-card/70 p-8 shadow-xl backdrop-blur lg:block">
-          <div className="inline-flex items-center gap-2 rounded-full border border-border bg-background/70 px-3 py-1 text-xs uppercase tracking-[0.24em] text-muted-foreground">
-            <Sparkles className="h-3.5 w-3.5 text-primary" />
+        <section className="relative hidden overflow-hidden rounded-[36px] border border-white/10 bg-white/6 p-8 shadow-2xl backdrop-blur-xl lg:block">
+          <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(34,211,238,0.08),transparent_45%,rgba(59,130,246,0.12))]" />
+          <div className="relative">
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/8 px-3 py-1 text-xs uppercase tracking-[0.24em] text-cyan-100/70">
+            <Sparkles className="h-3.5 w-3.5 text-cyan-300" />
             SaaS-ready finance workspace
           </div>
-          <h1 className="mt-6 max-w-xl text-5xl font-semibold tracking-tight text-foreground">
+          <h1 className="mt-6 max-w-xl text-5xl font-semibold tracking-tight text-white">
             MoneyFlow trasforma i numeri sparsi in decisioni.
           </h1>
-          <p className="mt-5 max-w-xl text-lg leading-8 text-muted-foreground">
+          <p className="mt-5 max-w-xl text-lg leading-8 text-slate-300">
             Budget, obiettivi, trend e alert intelligenti in un unico cockpit pensato per diventare una vera piattaforma.
           </p>
 
@@ -98,15 +100,16 @@ export function Auth({ onSuccess }: AuthProps) {
               body="Health score, burn rate, insight e priorita operative invece di semplici numeri."
             />
           </div>
+          </div>
         </section>
 
-        <Card className="mx-auto w-full max-w-xl overflow-hidden border-border/70 shadow-2xl">
-          <CardHeader className="border-b border-border/70 bg-muted/30 text-center">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/12 text-primary">
+        <Card className="mx-auto w-full max-w-xl overflow-hidden border-white/10 bg-slate-950/72 shadow-2xl backdrop-blur-xl">
+          <CardHeader className="border-b border-white/10 bg-white/[0.03] text-center">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-cyan-400/10 text-cyan-300 ring-1 ring-cyan-300/20">
               <Wallet className="h-8 w-8" />
             </div>
-            <CardTitle className="text-3xl">MoneyFlow</CardTitle>
-            <p className="text-sm text-muted-foreground">
+            <CardTitle className="text-3xl text-white">MoneyFlow</CardTitle>
+            <p className="text-sm text-slate-400">
               {isLogin ? 'Accedi al tuo workspace finanziario' : 'Crea il tuo spazio e inizia a monitorare tutto'}
             </p>
           </CardHeader>
@@ -114,19 +117,19 @@ export function Auth({ onSuccess }: AuthProps) {
           <CardContent className="space-y-5 pt-6">
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-foreground">Email</label>
+                <label className="mb-1.5 block text-sm font-medium text-slate-200">Email</label>
                 <Input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="tuo@email.com"
                   required
-                  className="h-12"
+                  className="h-12 border-white/10 bg-white/[0.04] text-white placeholder:text-slate-500"
                 />
               </div>
 
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-foreground">Password</label>
+                <label className="mb-1.5 block text-sm font-medium text-slate-200">Password</label>
                 <PasswordField
                   value={password}
                   onChange={setPassword}
@@ -136,11 +139,11 @@ export function Auth({ onSuccess }: AuthProps) {
                 />
                 {!isLogin && (
                   <div className="mt-3">
-                    <div className="mb-2 flex items-center justify-between text-xs text-muted-foreground">
+                    <div className="mb-2 flex items-center justify-between text-xs text-slate-400">
                       <span>Robustezza password</span>
                       <span>{passwordStrength.label}</span>
                     </div>
-                    <div className="h-2 rounded-full bg-muted">
+                    <div className="h-2 rounded-full bg-white/8">
                       <div className={`h-full rounded-full ${passwordStrength.tone}`} style={{ width: passwordStrength.width }} />
                     </div>
                   </div>
@@ -149,7 +152,7 @@ export function Auth({ onSuccess }: AuthProps) {
 
               {!isLogin && (
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-foreground">Conferma password</label>
+                  <label className="mb-1.5 block text-sm font-medium text-slate-200">Conferma password</label>
                   <PasswordField
                     value={confirmPassword}
                     onChange={setConfirmPassword}
@@ -161,7 +164,7 @@ export function Auth({ onSuccess }: AuthProps) {
               )}
 
               {error && (
-                <p className="rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700 dark:border-rose-950/60 dark:bg-rose-950/30 dark:text-rose-300">
+                <p className="rounded-xl border border-rose-500/20 bg-rose-500/10 px-3 py-2 text-sm text-rose-200">
                   {error}
                 </p>
               )}
@@ -171,7 +174,7 @@ export function Auth({ onSuccess }: AuthProps) {
               </Button>
             </form>
 
-            <div className="rounded-2xl border border-border bg-muted/20 p-4 text-sm text-muted-foreground">
+            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 text-sm text-slate-400">
               {isLogin
                 ? 'Sessione pronta per dashboard, insight e monitoraggio obiettivi in tempo reale.'
                 : 'Registrandoti attivi subito dashboard strategica, alert budget e suggerimenti intelligenti.'}
@@ -185,7 +188,7 @@ export function Auth({ onSuccess }: AuthProps) {
                   setError('');
                   setConfirmPassword('');
                 }}
-                className="text-sm text-muted-foreground transition-colors hover:text-primary"
+                className="text-sm text-slate-400 transition-colors hover:text-cyan-300"
               >
                 {isLogin ? 'Non hai ancora un account? Registrati' : 'Hai gia un account? Accedi'}
               </button>
@@ -218,12 +221,12 @@ function PasswordField({
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
         required
-        className="h-12 pr-12"
+        className="h-12 border-white/10 bg-white/[0.04] pr-12 text-white placeholder:text-slate-500"
       />
       <button
         type="button"
         onClick={onToggle}
-        className="absolute inset-y-0 right-3 flex items-center text-muted-foreground transition-colors hover:text-foreground"
+        className="absolute inset-y-0 right-3 flex items-center text-slate-400 transition-colors hover:text-white"
         aria-label={shown ? 'Nascondi password' : 'Mostra password'}
       >
         {shown ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -242,12 +245,12 @@ function BenefitCard({
   body: string;
 }) {
   return (
-    <div className="rounded-3xl border border-border/70 bg-background/80 p-5">
-      <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+    <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-5">
+      <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-cyan-400/10 text-cyan-300">
         <Icon className="h-5 w-5" />
       </div>
-      <h3 className="mt-4 text-lg font-semibold text-foreground">{title}</h3>
-      <p className="mt-2 text-sm leading-6 text-muted-foreground">{body}</p>
+      <h3 className="mt-4 text-lg font-semibold text-white">{title}</h3>
+      <p className="mt-2 text-sm leading-6 text-slate-400">{body}</p>
     </div>
   );
 }

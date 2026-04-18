@@ -14,6 +14,7 @@ backend/data/
 .env.*
 frontend/.env
 frontend/.env.*
+!frontend/.env.production
 backend/.env
 backend/.env.*
 

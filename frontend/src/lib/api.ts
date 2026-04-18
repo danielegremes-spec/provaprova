@@ -4,15 +4,20 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
 async function request<T>(endpoint: string, options?: RequestInit): Promise<T> {
   const token = localStorage.getItem('token');
+  let response: Response;
 
-  const response = await fetch(`${API_URL}${endpoint}`, {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token && { Authorization: `Bearer ${token}` }),
-      ...options?.headers,
-    },
-  });
+  try {
+    response = await fetch(`${API_URL}${endpoint}`, {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token && { Authorization: `Bearer ${token}` }),
+        ...options?.headers,
+      },
+    });
+  } catch {
+    throw new Error('Impossibile contattare il server. Riprova tra qualche secondo.');
+  }
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({ error: 'Errore richiesta' }));
