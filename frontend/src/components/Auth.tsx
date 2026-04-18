@@ -8,9 +8,10 @@ import { Input } from './ui/Input';
 
 interface AuthProps {
   onSuccess: () => void;
+  notice?: string;
 }
 
-export function Auth({ onSuccess }: AuthProps) {
+export function Auth({ onSuccess, notice }: AuthProps) {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -65,7 +66,11 @@ export function Auth({ onSuccess }: AuthProps) {
       setWorkspace(profile.workspace);
       onSuccess();
     } catch (err: any) {
-      setError(err.message || 'Errore durante l operazione');
+      if (isLogin && err.message === 'Credenziali non valide') {
+        setError('Credenziali non valide. Se il profilo online sembra sparito, prova a registrarti di nuovo: questo ambiente cloud puo resettare i dati.');
+      } else {
+        setError(err.message || 'Errore durante l operazione');
+      }
     } finally {
       setLoading(false);
     }
@@ -115,6 +120,12 @@ export function Auth({ onSuccess }: AuthProps) {
           </CardHeader>
 
           <CardContent className="space-y-5 pt-6">
+            {notice && (
+              <div className="rounded-2xl border border-amber-400/20 bg-amber-400/10 px-4 py-3 text-sm text-amber-100">
+                {notice}
+              </div>
+            )}
+
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-slate-200">Email</label>

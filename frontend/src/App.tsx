@@ -13,6 +13,7 @@ function App() {
   const { isAuthenticated, token, setAuth, setWorkspace, logout } = useAppStore()
   const [activeTab, setActiveTab] = useState('dashboard')
   const [booting, setBooting] = useState(true)
+  const [authNotice, setAuthNotice] = useState('')
 
   useEffect(() => {
     let cancelled = false
@@ -26,11 +27,13 @@ function App() {
       try {
         const result = await api.me()
         if (cancelled) return
+        setAuthNotice('')
         setAuth(token, result.user)
         setWorkspace(result.workspace)
       } catch {
         if (cancelled) return
         localStorage.removeItem('token')
+        setAuthNotice('La sessione online non e piu disponibile. In questa versione cloud il backend puo perdere i dati dopo un riavvio, quindi potresti dover ricreare l account.')
         logout()
       } finally {
         if (!cancelled) setBooting(false)
@@ -55,7 +58,7 @@ function App() {
   }
 
   if (!isAuthenticated) {
-    return <Auth onSuccess={() => setActiveTab('dashboard')} />
+    return <Auth notice={authNotice} onSuccess={() => setActiveTab('dashboard')} />
   }
 
   return (
